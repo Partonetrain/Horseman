@@ -31,6 +31,9 @@ public class HorsemanMixinPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
+        if (mixinClassName.toLowerCase().contains("mythicmounts")) {
+            return PlatformHelper.isModLoading("mythicmounts");
+        }
         return CONDITIONS.getOrDefault(mixinClassName, () -> true).get();
     }
 

@@ -59,6 +59,10 @@ repositories {
             includeGroup "curse.maven"
         }
     }
+    maven { url = "https://api.modrinth.com/maven" } // Location of MythicMounts
+    maven { url 'https://maven.blamejared.com' } // Location of Patchouli
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' } //Geckolib + mclib
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
 }
 
 dependencies {
@@ -80,6 +84,13 @@ dependencies {
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
+
+    modImplementation("maven.modrinth:mythic-mounts:${mythicmounts_forge_version}")
+
+    compileOnly ("vazkii.patchouli:Patchouli:${patchouli_forge_version}:api")
+    runtimeOnly ("vazkii.patchouli:Patchouli:${patchouli_forge_version}")
+    modRuntimeOnly("maven.modrinth:geckolib:${geckolib_forge_version}")
+    implementation 'com.eliotlash.mclib:mclib:20'
 }
 
 processResources {
@@ -133,48 +144,48 @@ components.java {
     }
 }
 
-publishing {
-    publications {
-        mavenForge(MavenPublication) {
-            artifactId = mod_id + "-" + project.name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        var path = System.getenv("LOCAL_MAVEN")
-        if (path != null) {
-            maven {
-                name = 'local'
-                url = uri(path + "/maven")
-            }
-        }
-    }
-}
-
-// https://github.com/shedaniel/unified-publishing
-unifiedPublishing {
-    project {
-        displayName = "${mod_name} - Forge ${minecraft_version} - ${mod_version}" // Optional, name of the file
-        version = mod_version // Optional, Inferred from project by default
-        changelog = rootProject.ext.changelog
-        releaseType = mod_release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = [minecraft_version]
-        gameLoaders = ["forge", "neoforge"]
-
-        mainPublication tasks.remapJar // Declares the publicated jar
-
-        curseforge {
-            token = System.getenv("CURSEFORGE_TOKEN")
-            id = mod_curseforge_project_id // Required, must be a string, ID of CurseForge project
-        }
-
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN")
-            id = mod_modrinth_project_id // Required, must be a string, ID of Modrinth project
-
-            displayName = "${mod_name} - ${mod_version}" // Optional, name of the file
-        }
-    }
-}
+//publishing {
+//    publications {
+//        mavenForge(MavenPublication) {
+//            artifactId = mod_id + "-" + project.name
+//            from components.java
+//        }
+//    }
+//
+//    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+//    repositories {
+//        var path = System.getenv("LOCAL_MAVEN")
+//        if (path != null) {
+//            maven {
+//                name = 'local'
+//                url = uri(path + "/maven")
+//            }
+//        }
+//    }
+//}
+//
+//// https://github.com/shedaniel/unified-publishing
+//unifiedPublishing {
+//    project {
+//        displayName = "${mod_name} - Forge ${minecraft_version} - ${mod_version}" // Optional, name of the file
+//        version = mod_version // Optional, Inferred from project by default
+//        changelog = rootProject.ext.changelog
+//        releaseType = mod_release_type // Optional, use "release", "beta" or "alpha"
+//        gameVersions = [minecraft_version]
+//        gameLoaders = ["forge", "neoforge"]
+//
+//        mainPublication tasks.remapJar // Declares the publicated jar
+//
+//        curseforge {
+//            token = System.getenv("CURSEFORGE_TOKEN")
+//            id = mod_curseforge_project_id // Required, must be a string, ID of CurseForge project
+//        }
+//
+//        modrinth {
+//            token = System.getenv("MODRINTH_TOKEN")
+//            id = mod_modrinth_project_id // Required, must be a string, ID of Modrinth project
+//
+//            displayName = "${mod_name} - ${mod_version}" // Optional, name of the file
+//        }
+//    }
+//}

@@ -6,6 +6,8 @@
   "client": [
   ],
   "mixins": [
+    "MythicMountsMountInventoryScreenMixin",
+    "MythicMountsMountInventoryMenuMixin"
   ],
   "injectors": {
     "defaultRequire": 1

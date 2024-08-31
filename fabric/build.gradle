@@ -21,7 +21,7 @@ configurations {
 }
 
 repositories {
-    maven { url = "https://api.modrinth.com/maven" } // LazyDFU
+    maven { url = "https://api.modrinth.com/maven" } // LazyDFU and MythicMounts
     maven { url = "https://maven.terraformersmc.com/releases/" } // Mod Menu
     maven { url = "https://mvn.devos.one/snapshots/" } // Create Fabric, Forge Tags, Milk Lib, Registrate Fabric
     maven { url = "https://mvn.devos.one/releases" } // Porting Lib Releases
@@ -32,6 +32,9 @@ repositories {
         name = "Fuzs Mod Resources"
         url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
     } // Forge Config API Port
+    maven { url 'https://maven.blamejared.com' } // Location of Patchouli
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' } //Geckolib + mclib
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
 }
 
 dependencies {
@@ -57,6 +60,13 @@ dependencies {
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    modImplementation("maven.modrinth:mythic-mounts:${mythicmounts_fabric_version}")
+
+    modImplementation "vazkii.patchouli:Patchouli:${patchouli_fabric_version}"
+    modRuntimeOnly("maven.modrinth:geckolib:${geckolib_fabric_version}")
+    implementation 'com.eliotlash.mclib:mclib:20'
+
 }
 
 processResources {
@@ -105,59 +115,59 @@ components.java {
         skip()
     }
 }
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = mod_id + "-" + project.name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        var path = System.getenv("LOCAL_MAVEN")
-        if (path != null) {
-            maven {
-                name = 'local'
-                url = uri(path + "/maven")
-            }
-        }
-    }
-}
-
-// https://github.com/shedaniel/unified-publishing
-unifiedPublishing {
-    project {
-        displayName = "${mod_name} - Fabric ${minecraft_version} - ${mod_version}" // Optional, name of the file
-        version = mod_version // Optional, Inferred from project by default
-        changelog = rootProject.ext.changelog
-        releaseType = mod_release_type // Optional, use "release", "beta" or "alpha"
-        gameVersions = [minecraft_version]
-        gameLoaders = ["fabric", "quilt"]
-
-        mainPublication tasks.remapJar // Declares the publicated jar
-
-        curseforge {
-            token = System.getenv("CURSEFORGE_TOKEN")
-            id = mod_curseforge_project_id // Required, must be a string, ID of CurseForge project
-
-            relations {
-                depends "fabric-api"
-                depends "forge-config-api-port-fabric"
-            }
-        }
-
-        modrinth {
-            token = System.getenv("MODRINTH_TOKEN")
-            id = mod_modrinth_project_id // Required, must be a string, ID of Modrinth project
-
-            displayName = "${mod_name} - ${mod_version}" // Optional, name of the file
-
-            relations {
-                depends "fabric-api"
-                depends "forge-config-api-port"
-            }
-        }
-    }
-}
+//
+//publishing {
+//    publications {
+//        mavenFabric(MavenPublication) {
+//            artifactId = mod_id + "-" + project.name
+//            from components.java
+//        }
+//    }
+//
+//    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+//    repositories {
+//        var path = System.getenv("LOCAL_MAVEN")
+//        if (path != null) {
+//            maven {
+//                name = 'local'
+//                url = uri(path + "/maven")
+//            }
+//        }
+//    }
+//}
+//
+//// https://github.com/shedaniel/unified-publishing
+//unifiedPublishing {
+//    project {
+//        displayName = "${mod_name} - Fabric ${minecraft_version} - ${mod_version}" // Optional, name of the file
+//        version = mod_version // Optional, Inferred from project by default
+//        changelog = rootProject.ext.changelog
+//        releaseType = mod_release_type // Optional, use "release", "beta" or "alpha"
+//        gameVersions = [minecraft_version]
+//        gameLoaders = ["fabric", "quilt"]
+//
+//        mainPublication tasks.remapJar // Declares the publicated jar
+//
+//        curseforge {
+//            token = System.getenv("CURSEFORGE_TOKEN")
+//            id = mod_curseforge_project_id // Required, must be a string, ID of CurseForge project
+//
+//            relations {
+//                depends "fabric-api"
+//                depends "forge-config-api-port-fabric"
+//            }
+//        }
+//
+//        modrinth {
+//            token = System.getenv("MODRINTH_TOKEN")
+//            id = mod_modrinth_project_id // Required, must be a string, ID of Modrinth project
+//
+//            displayName = "${mod_name} - ${mod_version}" // Optional, name of the file
+//
+//            relations {
+//                depends "fabric-api"
+//                depends "forge-config-api-port"
+//            }
+//        }
+//    }
+//}
