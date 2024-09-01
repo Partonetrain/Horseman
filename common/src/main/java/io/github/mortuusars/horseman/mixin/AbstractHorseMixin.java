@@ -55,7 +55,7 @@ public abstract class AbstractHorseMixin extends Animal {
     }
 
     /**
-     * All hitching stuff is hacky, but this is beyond stupid and just waiting to brake something.
+     * All hitching stuff is hacky, but this is beyond stupid and just waiting to break something.
      * This is done to move the Lead to a correct slot after chest has been put on a horse.
      * Lead slot is always the last one, and when placing a chest it will change from 2 to 17.
      * And if we don't move the item, it will appear in first chest slot.

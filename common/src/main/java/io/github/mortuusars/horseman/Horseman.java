@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 public class Horseman {
     public static final String ID = "horseman";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final boolean MYTHICMOUNTS_INSTALLED = PlatformHelper.isModLoading("mythicmounts");
 
     public static void init() {
         Blocks.init();

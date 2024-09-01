@@ -96,6 +96,10 @@ public class Hitching {
         Preconditions.checkState(shouldHaveLeadSlot(horse),
                 "Tried to get lead slot index when the hitching is disabled or horse cannot be hitched.");
 
+        if(Horseman.MYTHICMOUNTS_INSTALLED && MythicMountsHelper.isMythicMount(horse)){
+            return MythicMountsHelper.getLeadSlotIndex(horse);
+        }
+
         if (horse instanceof AbstractChestedHorse chestedHorse && chestedHorse.hasChest()) {
             int columns = ((AbstractChestedHorse) horse).getInventoryColumns();
             return 2 + columns * 3;

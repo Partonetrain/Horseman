@@ -4,6 +4,7 @@ import com.yahoo.chirpycricket.mythicmounts.entity.MountEntity;
 import com.yahoo.chirpycricket.mythicmounts.screen.MountScreenHandler;
 import io.github.mortuusars.horseman.Hitching;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -18,10 +19,11 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(MountScreenHandler.class)
-public class MythicMountsMountInventoryMenuMixin extends AbstractContainerMenu {
+@Mixin(value = MountScreenHandler.class, remap = false)
+public abstract class MythicMountsMountInventoryMenuMixin extends AbstractContainerMenu {
     @Shadow
     @Final
     public Container inventory;
@@ -33,14 +35,8 @@ public class MythicMountsMountInventoryMenuMixin extends AbstractContainerMenu {
         super(menuType, containerId);
     }
 
-    /**
-     * We cannot mixin with "INVOKE" into constructors on forge apparently, so adding Lead slot here is likely the only option.
-     * It should come before chest slots for Shift+Clicking to work properly.
-     * Unfortunately we cannot change (or at least not easily) indexes of chest slots,
-     * so Lead slot index will be after chest slots (for inventory, it's still added before then in order)
-     */
-    @Inject(method = "hasChest", at = @At(value = "HEAD"))
-    private void onHasChest(AbstractHorse horse, CallbackInfoReturnable<Boolean> cir) {
+    @Unique //reimplement hasChest with Horseman logic since MountScreenHandler does not extend HorseInventoryMenu
+    private boolean hasChest(AbstractHorse horse) {
         if (!horseman$leadSlotAdded && Hitching.shouldHaveLeadSlot(horse)) {
             int leadSlotIndex = Hitching.getLeadSlotIndex(horse);
             addSlot(new Slot(this.inventory, leadSlotIndex, 8, 54) {
@@ -67,6 +63,9 @@ public class MythicMountsMountInventoryMenuMixin extends AbstractContainerMenu {
             });
             horseman$leadSlotAdded = true;
         }
+
+        MountEntity thisMount = (MountEntity)horse;
+        return thisMount.hasChest();
     }
 
     /**
@@ -143,13 +142,10 @@ public class MythicMountsMountInventoryMenuMixin extends AbstractContainerMenu {
         cir.setReturnValue(ItemStack.EMPTY);
     }
 
-    @Override
-    public ItemStack quickMoveStack(Player player, int index) {
-        return null;
+    //redirect calls to MountEntity.hasChest to this mixin's hasChest()
+    @Redirect(method = "init", at=@At(value = "INVOKE", target = "Lcom/yahoo/chirpycricket/mythicmounts/entity/MountEntity;hasChest()Z"))
+    private boolean redirectHasChest(MountEntity instance){
+        return hasChest(instance);
     }
 
-    @Override
-    public boolean stillValid(Player player) {
-        return false;
-    }
 }

@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MountScreen.class)
-public class MythicMountsMountInventoryScreenMixin extends AbstractContainerScreen<MountScreenHandler> {
+public abstract class MythicMountsMountInventoryScreenMixin extends AbstractContainerScreen<MountScreenHandler> {
     @Shadow
     private AbstractHorse entity;
     @Unique
@@ -32,8 +32,8 @@ public class MythicMountsMountInventoryScreenMixin extends AbstractContainerScre
         super(menu, playerInventory, title);
     }
 
-    @Inject(method = "render", at = @At(value = "TAIL"))
-    private void onRenderBg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value = "RETURN"))
+    private void onRender(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Hitching.shouldHaveLeadSlot(this.entity)) {
             for (Slot slot : getMenu().slots) {
                 ItemStack stack = slot.getItem();
@@ -59,8 +59,4 @@ public class MythicMountsMountInventoryScreenMixin extends AbstractContainerScre
         }
     }
 
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        // NO-OP
-    }
 }

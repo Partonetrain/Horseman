@@ -6,8 +6,10 @@
   "client": [
   ],
   "mixins": [
-    "MythicMountsMountInventoryScreenMixin",
-    "MythicMountsMountInventoryMenuMixin"
+    "MythicMountsMountEntityInvoker",
+    "MythicMountsMountEntityMixin",
+    "MythicMountsMountInventoryMenuMixin",
+    "MythicMountsMountInventoryScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

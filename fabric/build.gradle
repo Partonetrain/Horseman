@@ -64,7 +64,7 @@ dependencies {
     modImplementation("maven.modrinth:mythic-mounts:${mythicmounts_fabric_version}")
 
     modImplementation "vazkii.patchouli:Patchouli:${patchouli_fabric_version}"
-    modRuntimeOnly("maven.modrinth:geckolib:${geckolib_fabric_version}")
+    modImplementation("maven.modrinth:geckolib:${geckolib_fabric_version}")
     implementation 'com.eliotlash.mclib:mclib:20'
 
 }

@@ -35,7 +35,7 @@ public abstract class HorseInventoryScreenMixin extends AbstractContainerScreen<
     }
 
     @Inject(method = "render", at = @At(value = "RETURN"))
-    private void onRenderBg(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
+    private void onRender(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         if (Hitching.shouldHaveLeadSlot(this.horse)) {
             for (Slot slot : getMenu().slots) {
                 ItemStack stack = slot.getItem();
